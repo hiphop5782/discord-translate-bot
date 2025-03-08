@@ -3,7 +3,6 @@
 
 # 토큰 변수
 
-
 import traceback
 import discord
 import json
@@ -86,6 +85,7 @@ async def get_or_create_webhook(channel):
 
 # **🔹 웹훅으로 메시지 보내기**
 async def send_webhook_message(channel, username, avatar_url, content="", image_urls=[], file_urls=[]):
+
     webhook = await get_or_create_webhook(channel)
 
     embeds = []
@@ -154,6 +154,7 @@ async def on_message(message):
     #                 username=message.author.display_name,
     #                 avatar_url=message.author.avatar.url if message.author.avatar else message.author.default_avatar.url,
     #                 content=f"**{translated.text}**"
+
     #             )
     #         except Exception as e:
     #             print(f"⚠️ 번역 오류 발생: {e}")
@@ -184,20 +185,24 @@ async def on_message(message):
         target_lang = config[target_channel_id]  # 대상 채널의 번역 언어
 
         try:
-            translated = ""
+            translated = None
             
             # 텍스트가 있을 경우만 복사
             if original_text:
                 translated = translator.translate(original_text, dest=target_lang)
 
-            print(f"**🔄 번역 ({target_lang})**: {translated.text}")
+            if translated == None:
+                print(f"**🔄 텍스트 없음")
+            else:
+                print(f"**🔄 번역 ({target_lang})**: {translated.text}")
 
             # 원래 메시지 보낸 사람의 닉네임과 프로필 사진을 사용하여 웹훅으로 메시지 전송
             await send_webhook_message(
                 channel,
                 username=message.author.display_name,
                 avatar_url=message.author.avatar.url if message.author.avatar else message.author.default_avatar.url,
-                content=translated.text,
+                content=translated.text if translated else "",
+
                 image_urls=image_urls,
                 file_urls=file_urls
             )

@@ -38,7 +38,9 @@ def save_config(config):
 config = load_config()
 
 # 디스코드 봇 설정
-TOKEN = ""
+f = open(".discord-key", "r")
+TOKEN = f.read()
+f.close()
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True;
@@ -189,7 +191,7 @@ async def on_message(message):
             
             # 텍스트가 있을 경우만 복사
             if original_text:
-                translated = translator.translate(original_text, dest=target_lang)
+                translated = await translator.translate(original_text, dest=target_lang)
 
             if translated == None:
                 print(f"**🔄 텍스트 없음")
